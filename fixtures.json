@@ -1,0 +1,58 @@
+[
+    {
+      "model": "cargoapp.Location",
+      "pk": 1,
+      "fields": {
+        "city": "Москва",
+        "region": "Москва",
+        "zip": "101000",
+        "latitude": 55.7558,
+        "longitude": 37.6173
+      }
+    },
+    {
+      "model": "cargoapp.Location",
+      "pk": 2,
+      "fields": {
+        "city": "Санкт-Петербург",
+        "region": "Ленинградская область",
+        "zip": "190000",
+        "latitude": 59.9343,
+        "longitude": 30.3351
+      }
+    },
+    {
+      "model": "cargoapp.Location",
+      "pk": 3,
+      "fields": {
+        "city": "Новосибирск",
+        "region": "Новосибирская область",
+        "zip": "630000",
+        "latitude": 55.0084,
+        "longitude": 82.9357
+      }
+    },
+    {
+      "model": "cargoapp.Location",
+      "pk": 4,
+      "fields": {
+        "city": "Екатеринбург",
+        "region": "Свердловская область",
+        "zip": "620000",
+        "latitude": 56.8389,
+        "longitude": 60.6057
+      }
+    },
+    {
+      "model": "cargoapp.location",
+      "pk": 5,
+      "fields": {
+        "city": "Казань",
+        "region": "Республика Татарстан",
+        "zip": "420000",
+        "latitude": 55.796127,
+        "longitude": 49.106405
+      }
+    }
+  ]
+  
