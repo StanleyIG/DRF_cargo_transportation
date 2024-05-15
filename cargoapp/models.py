@@ -34,7 +34,7 @@ class Location(models.Model):
 class Truck(models.Model):
     number = models.CharField(max_length=5, unique=True)
     #current_location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    current_location = models.CharField(max_length=10, null=False)
+    current_location = models.CharField(max_length=250, null=False)
     capacity = models.IntegerField()
 
 
@@ -48,8 +48,8 @@ class Truck(models.Model):
 
 
 class Cargo(models.Model):
-    pick_up = models.CharField(max_length=10, null=False)
-    delivery = models.CharField(max_length=10, null=False)
+    pick_up = models.CharField(max_length=250, null=False)
+    delivery = models.CharField(max_length=250, null=False)
     weight = models.DecimalField(max_digits=4, decimal_places=1)
     description = models.CharField(max_length=250)
 

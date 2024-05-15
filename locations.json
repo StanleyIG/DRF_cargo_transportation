@@ -1,0 +1,277 @@
+[
+  {
+    "model": "cargoapp.Location",
+    "pk": 1,
+    "fields": {
+      "city": "Москва",
+      "region": "Москва",
+      "zip": "101000",
+      "latitude": 55.7558,
+      "longitude": 37.6173
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 2,
+    "fields": {
+      "city": "Санкт-Петербург",
+      "region": "Ленинградская область",
+      "zip": "190000",
+      "latitude": 59.9343,
+      "longitude": 30.3351
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 3,
+    "fields": {
+      "city": "Новосибирск",
+      "region": "Новосибирская область",
+      "zip": "630000",
+      "latitude": 55.0084,
+      "longitude": 82.9357
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 4,
+    "fields": {
+      "city": "Екатеринбург",
+      "region": "Свердловская область",
+      "zip": "620000",
+      "latitude": 56.8389,
+      "longitude": 60.6057
+    }
+  },
+  {
+    "model": "cargoapp.location",
+    "pk": 5,
+    "fields": {
+      "city": "Казань",
+      "region": "Республика Татарстан",
+      "zip": "420000",
+      "latitude": 55.796127,
+      "longitude": 49.106405
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 1,
+    "fields": {
+      "city": "Москва",
+      "region": "Москва",
+      "zip": "101000",
+      "latitude": 55.7558,
+      "longitude": 37.6173
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 2,
+    "fields": {
+      "city": "Санкт-Петербург",
+      "region": "Ленинградская область",
+      "zip": "190000",
+      "latitude": 59.9343,
+      "longitude": 30.3351
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 3,
+    "fields": {
+      "city": "Новосибирск",
+      "region": "Новосибирская область",
+      "zip": "630000",
+      "latitude": 55.0084,
+      "longitude": 82.9357
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 4,
+    "fields": {
+      "city": "Екатеринбург",
+      "region": "Свердловская область",
+      "zip": "620000",
+      "latitude": 56.8389,
+      "longitude": 60.6057
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 5,
+    "fields": {
+      "city": "Казань",
+      "region": "Республика Татарстан",
+      "zip": "420000",
+      "latitude": 55.796127,
+      "longitude": 49.106405
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 6,
+    "fields": {
+      "city": "Нижний Новгород",
+      "region": "Нижегородская область",
+      "zip": "603000",
+      "latitude": 56.3272,
+      "longitude": 44.0020
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 7,
+    "fields": {
+      "city": "Челябинск",
+      "region": "Челябинская область",
+      "zip": "454000",
+      "latitude": 55.1522,
+      "longitude": 61.4108
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 8,
+    "fields": {
+      "city": "Омск",
+      "region": "Омская область",
+      "zip": "644000",
+      "latitude": 54.9885,
+      "longitude": 73.3240
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 9,
+    "fields": {
+      "city": "Ростов-на-Дону",
+      "region": "Ростовская область",
+      "zip": "344000",
+      "latitude": 47.2315,
+      "longitude": 39.7233
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 10,
+    "fields": {
+      "city": "Уфа",
+      "region": "Республика Башкортостан",
+      "zip": "450000",
+      "latitude": 54.7381,
+      "longitude": 55.9722
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 11,
+    "fields": {
+      "city": "Воронеж",
+      "region": "Воронежская область",
+      "zip": "394000",
+      "latitude": 51.6614,
+      "longitude": 39.1737
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 12,
+    "fields": {
+      "city": "Пермь",
+      "region": "Пермский край",
+      "zip": "614000",
+      "latitude": 58.0014,
+      "longitude": 56.2493
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 13,
+    "fields": {
+      "city": "Красноярск",
+      "region": "Красноярский край",
+      "zip": "660000",
+      "latitude": 56.0072,
+      "longitude": 92.8675
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 14,
+    "fields": {
+      "city": "Волгоград",
+      "region": "Волгоградская область",
+      "zip": "400000",
+      "latitude": 48.7021,
+      "longitude": 44.4997
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 15,
+    "fields": {
+      "city": "Саратов",
+      "region": "Саратовская область",
+      "zip": "410000",
+      "latitude": 51.5364,
+      "longitude": 46.0242
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 16,
+    "fields": {
+      "city": "Тюмень",
+      "region": "Тюменская область",
+      "zip": "625000",
+      "latitude": 57.1511,
+      "longitude": 65.5262
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 17,
+    "fields": {
+      "city": "Томск",
+      "region": "Томская область",
+      "zip": "634000",
+      "latitude": 56.4984,
+      "longitude": 84.9765
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 18,
+    "fields": {
+      "city": "Иркутск",
+      "region": "Иркутская область",
+      "zip": "664000",
+      "latitude": 52.2842,
+      "longitude": 104.2895
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 19,
+    "fields": {
+      "city": "Хабаровск",
+      "region": "Хабаровский край",
+      "zip": "680000",
+      "latitude": 48.4797,
+      "longitude": 135.0812
+    }
+  },
+  {
+    "model": "cargoapp.Location",
+    "pk": 20,
+    "fields": {
+      "city": "Владивосток",
+      "region": "Приморский край",
+      "zip": "690000",
+      "latitude": 43.1134,
+      "longitude": 131.8944
+    }
+  }
+]
