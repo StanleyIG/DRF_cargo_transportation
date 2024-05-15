@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .serializers import LocationModelSerializer, TruckModelSerializer, CargoModelSerializer
@@ -44,35 +45,17 @@ class TruckModelViewSet(ModelViewSet):
 
     
     def update(self, request, *args, **kwargs):
-        # Получаю объект Truck, который нужно обновить
+        partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        # Получаю zip код из запроса
-        zip_code = request.data.get('current_location')
-        number = request.data.get('number')
-        capacity =  request.data.get('capacity')
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         try:
-            # Получаю объект Location по zip коду
-            location = Location.objects.get(zip=str(zip_code))
-        except Location.DoesNotExist:
-            return Response({f'Локации по данному zop code {zip_code} не имеется в базе Location.'}, 
-                            status=status.HTTP_400_BAD_REQUEST)
-        # Обновляю объект Truck с новой локацией
-        full_address = f"{location.city}, {location.region} {location.zip}"
-        instance.current_location = full_address
-        instance.number = number
-        instance.capacity = capacity
-        try:
-            instance.save()
-            data = {
-                'current_location': full_address,
-                'capacity': capacity,
-                'number': number}
-            serializer = self.get_serializer(instance, data=data, partial=True)
+            # Удаляю поле id из обновляемых полей
             serializer.is_valid(raise_exception=True)
+            serializer.validated_data.pop('id', None)
             self.perform_update(serializer)
             return Response(serializer.data)
-        except IntegrityError:
-            return Response({f'данный номер {number} не является уникальным и уже имеется в базе'})
+        except ValidationError as e:
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
         
 
 
