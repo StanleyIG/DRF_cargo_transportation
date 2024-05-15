@@ -49,7 +49,6 @@ class TruckModelViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         try:
-            # Удаляю поле id из обновляемых полей
             serializer.is_valid(raise_exception=True)
             serializer.validated_data.pop('id', None)
             self.perform_update(serializer)

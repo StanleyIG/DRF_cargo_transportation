@@ -9,7 +9,7 @@ import random
 # python manage.py create_trucks 100 создаст 100 уникальных траков 
 
 class Command(BaseCommand):
-    help = 'создание 20-ти рандомных грузовиков'
+    help = 'создать любое колличество рандомных грузовиков'
 
     def add_arguments(self, parser):
         parser.add_argument('count', type=int, default=20, help='количество грузовиков для создания')
