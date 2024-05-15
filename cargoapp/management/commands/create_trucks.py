@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from random import randint
 from cargoapp.models import Truck, Location
 from django.db.utils import IntegrityError
+import random
 
 # команды
 # python manage.py create_trucks создаст 20 уникальных траков по умолчанию
@@ -16,7 +17,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         count = kwargs['count']
         for i in range(count):
-            location = Location.objects.order_by('?').first()
+            # location = Location.objects.order_by('?').first()
+            location = random.choice(Location.objects.all())
+
             capacity = randint(1, 1000)
             # добавлен цикл, который будет создавать новый объект модели до тех пор, пока 
             # не создасться нужное колличество уникальных траков.
