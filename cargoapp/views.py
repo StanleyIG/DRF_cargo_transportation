@@ -117,13 +117,16 @@ class CargoModelViewSet(ModelViewSet):
     
 
     def list(self, request, *args, **kwargs):
-        if cache.get('data_ready'):
+        cache_data = cache.get('data_ready')
+        if cache_data:
             print('Есть данные')
             if cache.get(f'truck') or cache.get(f'location'):
                 print('Есть бновления')
                 # Обнулить кэш
                 print('Обнулить кэш')
                 cache.clear()
+            print('Возвращаю кэш')
+            return Response(cache_data)
                 
         queryset = self.filter_queryset(self.get_queryset())
         # запрос списка грузов по конкретному расстоянию груза от трака
@@ -184,17 +187,29 @@ class CargoModelViewSet(ModelViewSet):
         cache.set('data_ready', data, timeout=60 * 60) 
             
         return Response(data)
-
+    
     def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        data = {
-            'weight': request.data.get('weight', instance.weight),
-            'description': request.data.get('description', instance.description),
-        }
-        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
+    
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.validated_data.pop('id', None)
+        self.perform_update(serializer)
         return Response(serializer.data)
+        
+
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     data = {
+    #         'weight': request.data.get('weight', instance.weight),
+    #         'description': request.data.get('description', instance.description),
+    #     }
+    #     serializer = self.get_serializer(instance, data=data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data)
 
     # Фильтр списка грузов (вес)
 
