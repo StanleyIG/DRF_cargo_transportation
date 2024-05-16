@@ -125,6 +125,7 @@ class CargoModelViewSet(ModelViewSet):
                 # Обнулить кэш
                 print('Обнулить кэш')
                 cache.clear()
+            print('Возвращаю кэш')
             return Response(cache_data)
                 
         queryset = self.filter_queryset(self.get_queryset())

@@ -22,7 +22,8 @@ def update_truck_cache(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=Truck)
 def delete_truck_cache(sender, instance, **kwargs):
-    cache.delete(f'truck')
+    print('сигнал удаления')
+    cache.clear()
 
 
 @receiver(post_save, sender=Location)
@@ -32,4 +33,5 @@ def update_location_cache(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=Location)
 def delete_location_cache(sender, instance, **kwargs):
-    cache.delete(f'location')
+    print('сигнал удаления')
+    cache.clear()
