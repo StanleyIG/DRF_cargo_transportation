@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "django_redis.middleware.RedisCacheMiddleware",
+    # "django_redis.middleware.RedisCacheMiddleware",
 ]
 
 ROOT_URLCONF = 'cargo_prjct.urls'

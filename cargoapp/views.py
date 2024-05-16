@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from .serializers import LocationModelSerializer, TruckSerializer, CargoModelSerializer
+from .serializers import LocationModelSerializer, TruckModelSerializer, CargoModelSerializer
 from .models import Location, Truck, Cargo
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from geopy.distance import distance
 import re
 from django.db.utils import IntegrityError
+from django.core.cache import cache
 
 
 """
@@ -39,7 +40,7 @@ class LocationModelViewSet(ModelViewSet):
 
 class TruckModelViewSet(ModelViewSet):
     queryset = Truck.objects.all()
-    serializer_class = TruckSerializer
+    serializer_class = TruckModelSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -113,8 +114,26 @@ class CargoModelViewSet(ModelViewSet):
         data['nearby_trucks'] = nearby_trucks
 
         return Response(data)
+    
 
     def list(self, request, *args, **kwargs):
+        if cache.get('data_ready'):
+            print('Есть данные')
+            if cache.get(f'truck') or cache.get(f'location'):
+                print('Есть бновления')
+                # Обнулить кэш
+                print('Обнулить кэш')
+                cache.clear()
+                                                
+            # if cache.get(f'truck_{request.instance}') or cache.get(f'location_{request.instance}'):
+            #     print('Есть обновления')
+            #     # Обнулить кэш
+            #     cache.clear()
+            # else:
+            #     data = cache.get('data_ready')
+            #     print('вернуть кэш')
+            #     return Response(data)
+            
         queryset = self.filter_queryset(self.get_queryset())
         # запрос списка грузов по конкретному расстоянию груза от трака
         distance_request = request.query_params.get('distance')
@@ -128,8 +147,6 @@ class CargoModelViewSet(ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         data = serializer.data
         trucks = Truck.objects.all()
-
-        nearby_trucks = []
         for i in range(len(data)):
             pick_up_str = data[i]['pick_up']
             pick_up_zip = re.search(r'\d{6}', pick_up_str).group(0).strip()
@@ -137,7 +154,7 @@ class CargoModelViewSet(ModelViewSet):
                 zip=str(pick_up_zip)).first()
 
             if pick_up_location is not None:
-                # nearby_trucks = []
+                nearby_trucks = []
                 for truck in trucks:
                     current_location_str = truck.current_location
                     current_location_zip = re.search(
@@ -171,6 +188,8 @@ class CargoModelViewSet(ModelViewSet):
                 else:
                     data[i]['count_trucks'] = len(nearby_trucks)
 
+        cache.set('data_ready', data, timeout=60 * 60) 
+            
         return Response(data)
 
     def update(self, request, *args, **kwargs):
