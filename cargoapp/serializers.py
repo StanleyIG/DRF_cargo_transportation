@@ -16,20 +16,15 @@ class TruckModelSerializer(ModelSerializer):
         model = Truck
         fields = '__all__'
 
-
     def update(self, instance, validated_data):
         try:
-            # Получаю объект Location по zip коду.
-            # Я знаю, что не обязательно прибегать к таким вот
-            # манипуляциям, просто для наглядности, что можно так.
-            # Но лучше сделать это используя методы валидаторы с префиксом validate_
             zip_code = validated_data.get(
                 'current_location', instance.current_location)
             location = Location.objects.get(zip=str(zip_code))
             full_address = f"{location.city}, {location.region} {location.zip}"
         except Location.DoesNotExist:
             full_address = instance.current_location
-            raise ValidationError(f'Локации по данному zop code {zip_code} не имеется в базе Location.')
+            raise ValidationError(f'Локации по данному zip code {zip_code} не имеется в базе Location.')
 
         instance.current_location = full_address
         instance.number = validated_data.get('number', instance.number)
@@ -56,3 +51,34 @@ class CargoModelSerializer(ModelSerializer):
     class Meta:
         model = Cargo
         fields = '__all__'
+
+    def update(self, instance, validated_data):
+        instance.pick_up = validated_data.get('pick_up', instance.pick_up)
+        instance.delivery = validated_data.get('delivery', instance.delivery)
+        instance.weight = validated_data.get('weight', instance.weight)
+        instance.description = validated_data.get(
+            'description', instance.description)
+        instance.save()
+        return instance
+        
+    # def validate_pick_up(self, value):
+    #     location = Location.objects.get(zip=str(value))
+    #     if Cargo.objects.filter(pick_up=value).exclude(pk=self.instance.pk).exists():
+    #         raise ValidationError(f'Локации по данному zip code {location.pick_up} не имеется в базе Location.')
+    #     return value
+    
+    # def validate_delivery(self, value):
+    #     if Cargo.objects.filter(delivery=value).exclude(pk=self.instance.pk).exists():
+    #         raise ValidationError(f'Локации по данному zip code не имеется в базе Location.')
+    #     return value
+    
+
+    # def to_representation(self, instance):
+    #     """по дефолту в поле current_location будет показан только индекс, а не весь адрес"""
+    #     data = super().to_representation(instance)
+    #     data['pick_up'] = instance.delivery.split()[-1]
+    #     data['delivery'] = instance.delivery.split()[-1]
+    #     return data
+
+                
+                
