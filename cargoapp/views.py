@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from geopy.distance import distance
 import re
 from django.db.utils import IntegrityError
+from django.core.cache import cache
 
 
 """
@@ -32,8 +33,6 @@ from django.db.utils import IntegrityError
 """
 
 
-
-
 class LocationModelViewSet(ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationModelSerializer
@@ -43,21 +42,18 @@ class TruckModelViewSet(ModelViewSet):
     queryset = Truck.objects.all()
     serializer_class = TruckModelSerializer
 
-    
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         try:
-            # Удаляю поле id из обновляемых полей
             serializer.is_valid(raise_exception=True)
             serializer.validated_data.pop('id', None)
             self.perform_update(serializer)
             return Response(serializer.data)
         except ValidationError as e:
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
-        
-
 
 
 class CargoModelViewSet(ModelViewSet):
@@ -84,10 +80,9 @@ class CargoModelViewSet(ModelViewSet):
 
         serializer = self.get_serializer(cargo)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, 
-                        status=status.HTTP_201_CREATED, 
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED,
                         headers=headers)
-    
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -101,31 +96,40 @@ class CargoModelViewSet(ModelViewSet):
         nearby_trucks = []
         for truck in trucks:
             current_location_str = truck.current_location
-            current_location_zip = re.search(r'\d{6}', current_location_str).group(0).strip()
+            current_location_zip = re.search(
+                r'\d{6}', current_location_str).group(0).strip()
             try:
-                current_location = Location.objects.get(zip=str(current_location_zip))
+                current_location = Location.objects.get(
+                    zip=str(current_location_zip))
             except Location.DoesNotExist:
                 continue
-            cargo_distance = distance((pick_up_location.latitude, 
-                                       pick_up_location.longitude), 
-                                       (current_location.latitude, 
-                                        current_location.longitude)).km
+            cargo_distance = distance((pick_up_location.latitude,
+                                       pick_up_location.longitude),
+                                      (current_location.latitude,
+                                       current_location.longitude)).km
             if cargo_distance <= 3000:
                 nearby_trucks.append((truck.number, cargo_distance))
-        
+
         data['count_trucks'] = len(nearby_trucks)
         data['nearby_trucks'] = nearby_trucks
-        
-       
+
         return Response(data)
     
 
     def list(self, request, *args, **kwargs):
+        if cache.get('data_ready'):
+            print('Есть данные')
+            if cache.get(f'truck') or cache.get(f'location'):
+                print('Есть бновления')
+                # Обнулить кэш
+                print('Обнулить кэш')
+                cache.clear()
+                
         queryset = self.filter_queryset(self.get_queryset())
         # запрос списка грузов по конкретному расстоянию груза от трака
         distance_request = request.query_params.get('distance')
         weight = self.request.query_params.get('weight')
-        #print(distance_request, weight)
+        # print(distance_request, weight)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -137,43 +141,50 @@ class CargoModelViewSet(ModelViewSet):
         for i in range(len(data)):
             pick_up_str = data[i]['pick_up']
             pick_up_zip = re.search(r'\d{6}', pick_up_str).group(0).strip()
-            pick_up_location = Location.objects.filter(zip=str(pick_up_zip)).first()
-            
+            pick_up_location = Location.objects.filter(
+                zip=str(pick_up_zip)).first()
+
             if pick_up_location is not None:
                 nearby_trucks = []
                 for truck in trucks:
                     current_location_str = truck.current_location
-                    current_location_zip = re.search(r'\d{6}', current_location_str).group(0).strip()
+                    current_location_zip = re.search(
+                        r'\d{6}', current_location_str).group(0).strip()
                     capacity = truck.capacity
                     try:
-                        current_location = Location.objects.get(zip=str(current_location_zip))
+                        current_location = Location.objects.get(
+                            zip=str(current_location_zip))
                     except Location.DoesNotExist:
                         data[i]['count_trucks'] = 0
                         continue
-                    cargo_distance = distance((pick_up_location.latitude, 
-                                               pick_up_location.longitude), 
-                                               (current_location.latitude, 
-                                                current_location.longitude)).km
+                    cargo_distance = distance((pick_up_location.latitude,
+                                               pick_up_location.longitude),
+                                              (current_location.latitude,
+                                               current_location.longitude)).km
                     if cargo_distance <= 2000 and not distance_request:
                         nearby_trucks.append((truck.number, cargo_distance))
                     elif distance_request and weight:
                         if cargo_distance <= int(distance_request) and int(weight) <= capacity:
-                            nearby_trucks.append((truck.number, cargo_distance))
+                            nearby_trucks.append(
+                                (truck.number, cargo_distance))
                     elif distance_request:
                         if cargo_distance <= int(distance_request):
-                            nearby_trucks.append((truck.number, cargo_distance))
-                    
+                            nearby_trucks.append(
+                                (truck.number, cargo_distance))
+
                 if distance_request:
                     data[i]['count_trucks'] = nearby_trucks
                 elif distance_request and weight:
-                     data[i]['count_trucks'] = nearby_trucks
+                    data[i]['count_trucks'] = nearby_trucks
                 else:
                     data[i]['count_trucks'] = len(nearby_trucks)
-
+                    
+        # ключи кэша простые без уникальности, только для проверки.
+        # способов обновд\ления даных кэша через Django signals
+        cache.set('data_ready', data, timeout=60 * 60) 
+            
         return Response(data)
-    
 
-    
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         data = {
@@ -184,28 +195,18 @@ class CargoModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
 
     # Фильтр списка грузов (вес)
+
     def get_queryset(self):
         queryset = Cargo.objects.all()
         weight = self.request.query_params.get('weight')
-        #print(weight)
+        # print(weight)
         if weight:
             return Cargo.objects.filter(weight=weight)
         return queryset
-        
 
-        
 
-        
-        
-        
-        
-        
-        
-        
-    
 # def list(self, request, *args, **kwargs):
 #         queryset = self.filter_queryset(self.get_queryset())
 
@@ -221,7 +222,7 @@ class CargoModelViewSet(ModelViewSet):
 #             pick_up_str = data[i]['pick_up']
 #             pick_up_zip = re.search(r'\d{6}', pick_up_str).group(0).strip()
 #             pick_up_location = Location.objects.filter(zip=str(pick_up_zip)).first()
-            
+
 #             if pick_up_location is not None:
 #                 nearby_trucks = []
 #                 for truck in trucks:
@@ -235,19 +236,8 @@ class CargoModelViewSet(ModelViewSet):
 #                     cargo_distance = distance((pick_up_location.latitude, pick_up_location.longitude), (current_location.latitude, current_location.longitude)).km
 #                     if cargo_distance <= 1200:
 #                         nearby_trucks.append((truck.number, cargo_distance))
-                
+
 #                 data[i]['count_trucks'] = len(nearby_trucks)
 
-                   
+
 #         return Response(data)
-
-            
-        
-
-
-
-
-    
-
-
-    
