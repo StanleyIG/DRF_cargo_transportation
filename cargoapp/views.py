@@ -124,16 +124,7 @@ class CargoModelViewSet(ModelViewSet):
                 # Обнулить кэш
                 print('Обнулить кэш')
                 cache.clear()
-                                                
-            # if cache.get(f'truck_{request.instance}') or cache.get(f'location_{request.instance}'):
-            #     print('Есть обновления')
-            #     # Обнулить кэш
-            #     cache.clear()
-            # else:
-            #     data = cache.get('data_ready')
-            #     print('вернуть кэш')
-            #     return Response(data)
-            
+                
         queryset = self.filter_queryset(self.get_queryset())
         # запрос списка грузов по конкретному расстоянию груза от трака
         distance_request = request.query_params.get('distance')
