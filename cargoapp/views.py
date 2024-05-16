@@ -178,7 +178,9 @@ class CargoModelViewSet(ModelViewSet):
                     data[i]['count_trucks'] = nearby_trucks
                 else:
                     data[i]['count_trucks'] = len(nearby_trucks)
-
+                    
+        # ключи кэша простые без уникальности, только для проверки.
+        # способов обновд\ления даных кэша через Django signals
         cache.set('data_ready', data, timeout=60 * 60) 
             
         return Response(data)
