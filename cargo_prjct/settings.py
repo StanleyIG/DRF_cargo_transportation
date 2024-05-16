@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_redis.middleware.RedisCacheMiddleware",
 ]
 
 ROOT_URLCONF = 'cargo_prjct.urls'
@@ -95,6 +96,19 @@ DATABASES = {
         "HOST": "localhost",
         'PORT': '5432',
         # 'ATOMIC_REQUESTS': True,
+    }
+}
+
+
+# КЭШ
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379", 
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 

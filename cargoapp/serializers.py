@@ -17,7 +17,7 @@ class LocationModelSerializer(ModelSerializer):
 #     class Meta:
 #         model = Truck
 #         fields = '__all__'
-class TruckModelSerializer(Serializer):
+class TruckSerializer(Serializer):
     id = IntegerField(read_only=True)
     number = CharField(max_length=10)
     current_location = CharField(max_length=250)
