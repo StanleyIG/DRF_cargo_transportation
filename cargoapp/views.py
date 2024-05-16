@@ -89,6 +89,7 @@ class CargoModelViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         data = serializer.data
         pick_up_str = data['pick_up']
+        weight = data['weight']
         pick_up_zip = re.search(r'\d{6}', pick_up_str).group(0).strip()
         pick_up_location = get_object_or_404(Location, zip=str(pick_up_zip))
 
@@ -107,7 +108,7 @@ class CargoModelViewSet(ModelViewSet):
                                        pick_up_location.longitude),
                                       (current_location.latitude,
                                        current_location.longitude)).km
-            if cargo_distance <= 3000:
+            if cargo_distance <= 400 and float(weight) <= float(truck.capacity):
                 nearby_trucks.append((truck.number, cargo_distance))
 
         data['count_trucks'] = len(nearby_trucks)
@@ -125,8 +126,10 @@ class CargoModelViewSet(ModelViewSet):
                 # Обнулить кэш
                 print('Обнулить кэш')
                 cache.clear()
-            print('Возвращаю кэш')
-            return Response(cache_data)
+                del cache_data
+            else:
+                print('Возвращаю кэш')
+                return Response(cache_data)
                 
         queryset = self.filter_queryset(self.get_queryset())
         # запрос списка грузов по конкретному расстоянию груза от трака
@@ -146,6 +149,7 @@ class CargoModelViewSet(ModelViewSet):
             pick_up_zip = re.search(r'\d{6}', pick_up_str).group(0).strip()
             pick_up_location = Location.objects.filter(
                 zip=str(pick_up_zip)).first()
+            weight_cargo = data[i]['weight']
 
             if pick_up_location is not None:
                 nearby_trucks = []
@@ -164,14 +168,15 @@ class CargoModelViewSet(ModelViewSet):
                                                pick_up_location.longitude),
                                               (current_location.latitude,
                                                current_location.longitude)).km
-                    if cargo_distance <= 2000 and not distance_request:
-                        nearby_trucks.append((truck.number, cargo_distance))
+                    if cargo_distance <= 400 and not distance_request:
+                            if float(weight_cargo) <= float(truck.capacity):
+                                nearby_trucks.append((truck.number, cargo_distance))
                     elif distance_request and weight:
                         if cargo_distance <= int(distance_request) and int(weight) <= capacity:
                             nearby_trucks.append(
                                 (truck.number, cargo_distance))
                     elif distance_request:
-                        if cargo_distance <= int(distance_request):
+                        if cargo_distance <= int(distance_request) and float(weight_cargo) <= float(truck.capacity):
                             nearby_trucks.append(
                                 (truck.number, cargo_distance))
 
